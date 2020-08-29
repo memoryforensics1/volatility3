@@ -34,7 +34,7 @@ class VadInfo(interfaces.plugins.PluginInterface):
     """Lists process memory ranges."""
 
     _required_framework_version = (2, 0, 0)
-    _version = (1, 1, 0)
+    _version = (2, 0, 0)
     MAXSIZE_DEFAULT = 0
 
     def __init__(self, *args, **kwargs):
@@ -148,7 +148,7 @@ class VadInfo(interfaces.plugins.PluginInterface):
         file_name = "pid.{0}.vad.{1:#x}-{2:#x}.dmp".format(proc_id, vad_start, vad_end)
         try:
             file_handler = file_handler(file_name)
-            with file_handler as filedata:
+            with file_handler as file_data:
                 chunk_size = 1024 * 1024 * 10
                 offset = vad_start
                 while offset < vad_end:
@@ -156,7 +156,7 @@ class VadInfo(interfaces.plugins.PluginInterface):
                     data = proc_layer.read(offset, to_read, pad = True)
                     if not data:
                         break
-                    filedata.write(data)
+                    file_data.write(data)
                     offset += to_read
 
         except Exception as excp:
@@ -186,10 +186,10 @@ class VadInfo(interfaces.plugins.PluginInterface):
 
                 file_output = "Disabled"
                 if self.config['dump']:
-                    filedata = self.vad_dump(self.context, proc, vad, self._file_handler)
+                    file_handler = self.vad_dump(self.context, proc, vad, self._file_handler)
                     file_output = "Error outputting file"
-                    if filedata:
-                        file_output = filedata.preferred_filename
+                    if file_handler:
+                        file_output = file_handler.preferred_filename
 
                 yield (0, (proc.UniqueProcessId, process_name, format_hints.Hex(vad.vol.offset),
                            format_hints.Hex(vad.get_start()), format_hints.Hex(vad.get_end()), vad.get_tag(),
