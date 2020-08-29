@@ -455,13 +455,16 @@ class CommandLine:
         output_dir = self.output_dir
 
         class CLIFileHandler(io.BytesIO, interfaces.plugins.FileHandlerInterface):
-            def __init__(self, filename: str, immediate_commit: bool = False):
+            def __init__(self, filename: str):
                 io.BytesIO.__init__(self)
-                interfaces.plugins.FileHandlerInterface.__init__(self, filename, immediate_commit)
+                interfaces.plugins.FileHandlerInterface.__init__(self, filename)
 
             def close(self):
+                # Don't overcommit
                 if self.closed:
                     return
+
+                self.seek(0)
 
                 if output_dir is None:
                     raise TypeError("Output directory is not a string")
@@ -474,9 +477,11 @@ class CommandLine:
                 if not os.path.exists(output_filename):
                     with open(output_filename, "wb") as current_file:
                         current_file.write(self.read())
+                        self._committed = True
                         vollog.log(logging.INFO, "Saved stored plugin file: {}".format(output_filename))
                 else:
                     vollog.warning("Refusing to overwrite an existing file: {}".format(output_filename))
+
                 super().close()
 
         return CLIFileHandler
