@@ -109,8 +109,9 @@ class VadInfo(interfaces.plugins.PluginInterface):
 
     @classmethod
     def vad_dump(
-        cls, context: interfaces.context.ContextInterface, proc: interfaces.objects.ObjectInterface,
-        vad: interfaces.objects.ObjectInterface, file_handler: Type[interfaces.plugins.FileHandlerInterface]
+            cls, context: interfaces.context.ContextInterface, proc: interfaces.objects.ObjectInterface,
+            vad: interfaces.objects.ObjectInterface, file_handler: Type[interfaces.plugins.FileHandlerInterface],
+            maxsize: int = MAXSIZE_DEFAULT
     ) -> Optional[interfaces.plugins.FileHandlerInterface]:
         """Extracts the complete data for Vad as a FileInterface.
 
