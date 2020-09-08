@@ -35,7 +35,7 @@ class PsTree(interfaces.plugins.PluginInterface):
                                             optional = True),
             requirements.VersionRequirement(name = 'pslist',
                                             component = pslist.PsList,
-                                            version = (1, 0, 0)),
+                                            version = (2, 0, 0)),
             requirements.ListRequirement(name = 'pid',
                                          element_type = int,
                                          description = "Process ID to include (all other processes are excluded)",
